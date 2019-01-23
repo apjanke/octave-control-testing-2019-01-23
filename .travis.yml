@@ -30,8 +30,6 @@ matrix:
       osx_image: xcode10.1
       env: 
         - dist="Octave 4.4"
-        # gcc isn't linked in the xcode10.1 image
-        - FORTRAN=/usr/local/opt/gcc/bin/gfortran
     - os: osx
       osx_image: xcode10
       env: dist="Octave 4.4"
@@ -42,6 +40,8 @@ matrix:
 install:
   # Install Octave 4.2, even if it's not the default
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./dev-tools/install-octave-4.2-ubuntu.sh; fi
+  # Force linkage of gcc so octave can find gfortran
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link gcc; true; fi  
   - which octave
   - octave --version
 
