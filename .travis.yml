@@ -25,7 +25,15 @@ matrix:
   include:
     - os: linux
       dist: xenial
-      env: dist="Xenial 16.x, Octave 4.2"
+      env: 
+        - dist="Xenial 16.x"
+        - OCTAVE_VER=4.2
+    - os: linux
+      dist: xenial
+      env: 
+        - dist="Xenial 16.x"
+        - OCTAVE_VER=4.4
+        - OCTAVE="flatpak run org.octave.Octave --no-gui"
     - os: osx
       osx_image: xcode10.1
       env: 
@@ -38,8 +46,8 @@ matrix:
       env: dist="Octave 4.4"
 
 install:
-  # Install Octave 4.2, even if it's not the default
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./dev-tools/install-octave-4.2-ubuntu.sh; fi
+  # Install Octave 4.2/4.4, even if it's not the default
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./dev-tools/install-new-octave-ubuntu.sh; fi
   # Force linkage of gcc so octave can find gfortran
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link gcc; true; fi  
   - which octave
@@ -47,9 +55,10 @@ install:
 
 script:
   - make local
-  - make test
+  # Don't test on local; this package isn't set up for its
+  #- make test
   - make dist
   - octave --no-gui --eval "pkg install ./target/control-3.1.0.tar.gz"
   - octave --no-gui --eval "pkg load control; pkg unload control"
-  - octave --no-gui --eval "pkg load control; runtests ./inst"
+  - octave --no-gui --eval "pkg load control; my_run_tests_and_exit ./inst"
   - octave --no-gui --eval "pkg uninstall control"
