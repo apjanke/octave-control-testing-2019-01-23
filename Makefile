@@ -1,92 +1,226 @@
-## Copyright 2015-2016 Carnë Draug
-## Copyright 2015-2016 Oliver Heimlich
-##
-## Copying and distribution of this file, with or without modification,
-## are permitted in any medium without royalty provided the copyright
-## notice and this notice are preserved.  This file is offered as-is,
-## without any warranty.
+# This Makefile is just for when you're hacking on this package inside
+# its repo. It'll build the octfiles and install them into inst/.
+#
+# This only works if the octave and mkoctfile on your path are the ones from
+# the Octave that you will be using! Otherwise your octfile may crash
+# Octave. To make this work, set PATH=...:$PATH before your 'make' invocation
+# to pick up the right commands. Example:
+#
+#     PATH="/Applications/Octave-4.4.1.app/Contents/Resources/usr/bin:$PATH"
+#     make
+#
+# Note: the 'make dist' command generates the dist tarball from the last
+# git in source control, not the current directory contents. So make sure to
+# check in your changes if you're testing something out.
 
-PACKAGE := $(shell grep "^Name: " DESCRIPTION | cut -f2 -d" ")
-VERSION := $(shell grep "^Version: " DESCRIPTION | cut -f2 -d" ")
+## Some basic tools (can be overriden using environment variables)
+SED ?= sed
+TAR ?= tar
+GREP ?= grep
+CUT ?= cut
 
-TARGET_DIR      := target
-RELEASE_DIR     := $(TARGET_DIR)/$(PACKAGE)-$(VERSION)
-RELEASE_TARBALL := $(TARGET_DIR)/$(PACKAGE)-$(VERSION).tar.gz
-HTML_DIR        := $(TARGET_DIR)/$(PACKAGE)-html
-HTML_TARBALL    := $(TARGET_DIR)/$(PACKAGE)-html.tar.gz
+## Note the use of ':=' (immediate set) and not just '=' (lazy set).
+## http://stackoverflow.com/a/448939/1609556
+package := $(shell $(GREP) "^Name: " DESCRIPTION | $(CUT) -f2 -d" ")
+version := $(shell $(GREP) "^Version: " DESCRIPTION | $(CUT) -f2 -d" ")
 
-M_SOURCES   := $(wildcard inst/*.m)
-CC_SOURCES  := $(wildcard src/*.cc)
-PKG_ADD     := $(shell grep -sPho '(?<=(//|\#\#) PKG_ADD: ).*' $(CC_SOURCES) $(M_SOURCES))
+target_dir       := ./target
+release_dir      := $(target_dir)/$(package)-$(version)
+release_tarball  := $(target_dir)/$(package)-$(version).tar.gz
+html_dir         := $(target_dir)/$(package)-html
+html_tarball     := $(target_dir)/$(package)-html.tar.gz
+installation_dir := $(target_dir)/.installation
+package_list     := $(installation_dir)/.octave_packages
+install_stamp    := $(installation_dir)/.install_stamp
 
-OCTAVE ?= octave --no-window-system --silent
+## These can be set by environment variables which allow to easily
+## test with different Octave versions.
+ifndef OCTAVE
+OCTAVE := octave
+endif
+OCTAVE := $(OCTAVE) --no-gui --silent --norc
+MKOCTFILE ?= mkoctfile
 
-.PHONY: help dist html release install all check run clean
+## Command used to set permissions before creating tarballs
+FIX_PERMISSIONS ?= chmod -R a+rX,u+w,go-w,ug-s
 
+## Detect which VCS is used
+vcs := $(if $(wildcard .hg),hg,$(if $(wildcard .git),git,unknown))
+ifeq ($(vcs),hg)
+release_dir_dep := .hg/dirstate
+endif
+ifeq ($(vcs),git)
+release_dir_dep := .git/index
+endif
+
+.PHONY: help
+
+## make will display the command before runnning them.  Use @command
+## to not display it (makes specially sense for echo).
 help:
 	@echo "Targets:"
-	@echo "   dist    - Create $(RELEASE_TARBALL) for release"
-	@echo "   html    - Create $(HTML_TARBALL) for release"
-	@echo "   release - Create both of the above and show md5sums"
-	@echo
-	@echo "   install - Install the package in GNU Octave"
-	@echo "   all     - Build all oct files"
-	@echo "   check   - Execute package tests (w/o install)"
-	@echo "   run     - Run Octave with development in PATH (no install)"
-	@echo
-	@echo "   clean   - Remove releases, html documentation, and oct files"
+	@echo "   local   - Build octfiles int local inst/ directory"
+	@echo "   dist    - Create $(release_tarball) for release."
+	@echo "   html    - Create $(html_tarball) for release."
+	@echo "   release - Create both of the above and show md5sums."
+	@echo "   install - Install the package in $(installation_dir), where it is not visible in a normal Octave session."
+	@echo "   check   - Execute package tests."
+	@echo "   doctest - Test the help texts with the doctest package."
+	@echo "   run     - Run Octave with the package installed in $(installation_dir) in the path."
+	@echo "   clean   - Remove everything made with this Makefile."
 
+
+##
+## Recipes for release tarballs (package + html)
+##
+
+## dist and html targets are only PHONY/alias targets to the release
+## and html tarballs.
+dist: $(release_tarball)
+html: $(html_tarball)
+
+## An implicit rule with a recipe to build the tarballs correctly.
 %.tar.gz: %
-	tar -c -f - --posix -C "$(TARGET_DIR)/" "$(notdir $<)" | gzip -9n > "$@"
+	$(TAR) -c -f - --posix -C "$(target_dir)/" "$(notdir $<)" | gzip -9n > "$@"
 
-$(RELEASE_DIR): .hg/dirstate
-	@echo "Creating package version $(VERSION) release ..."
+clean-tarballs:
+	-$(RM) $(release_tarball) $(html_tarball)
+
+## Create the unpacked package.
+##
+## Notes:
+##    * having ".hg/dirstate" (or ".git/index") as a prerequesite means it is
+##      only rebuilt if we are at a different commit.
+##    * the variable RM usually defaults to "rm -f"
+##    * having this recipe separate from the one that makes the tarball
+##      makes it easy to have packages in alternative formats (such as zip)
+##    * note that if a commands needs to be run in a specific directory,
+##      the command to "cd" needs to be on the same line.  Each line restores
+##      the original working directory.
+$(release_dir): $(release_dir_dep)
 	-$(RM) -r "$@"
-	hg archive \
-	  --exclude ".hg*" --exclude "Makefile" --exclude "devel" \
-	  --type files "$@"
-	chmod -R a+rX,u+w,go-w "$@"
+ifeq (${vcs},hg)
+	hg archive --exclude ".hg*" --type files "$@"
+endif
+ifeq (${vcs},git)
+	git archive --format=tar --prefix="$@/" HEAD | $(TAR) -x
+	$(RM) "$@/.gitignore"
+endif
+## Don't fall back to run the supposed necessary contents of
+## 'bootstrap' here. Users are better off if they provide
+## 'bootstrap'. Administrators, checking build reproducibility, can
+## put in the missing 'bootstrap' file if they feel they know its
+## necessary contents.
+ifneq (,$(wildcard src/bootstrap))
+	cd "$@/src" && ./bootstrap && $(RM) -r "autom4te.cache"
+endif
 
-$(HTML_DIR): install
-	@echo "Generating HTML documentation. This may take a while ..."
-	-$(RM) -r "$@"
-	$(OCTAVE) --no-window-system --silent \
-	  --eval "pkg load generate_html; " \
-	  --eval "pkg load $(PACKAGE);" \
-	  --eval 'generate_package_html ("${PACKAGE}", "$@", "octave-forge");'
-	chmod -R a+rX,u+w,go-w $@
+run_in_place = $(OCTAVE) --eval ' pkg ("local_list", "$(package_list)"); ' \
+                         --eval ' pkg ("load", "$(package)"); '
 
-dist: $(RELEASE_TARBALL)
-html: $(HTML_TARBALL)
+#html_options = --eval 'options = get_html_options ("octave-forge");'
+## Uncomment this for package documentation.
+html_options = --eval 'options = get_html_options ("octave-forge");' \
+               --eval 'options.package_doc = "$(package).texi";'
+$(html_dir): $(install_stamp)
+	$(RM) -r "$@";
+	$(run_in_place)                    \
+        --eval ' pkg load generate_html; ' \
+	$(html_options)                    \
+        --eval ' generate_package_html ("$(package)", "$@", options); ';
+	$(FIX_PERMISSIONS) "$@";
 
-release: dist html
-	md5sum $(RELEASE_TARBALL) $(HTML_TARBALL)
-	@echo "Upload @ https://sourceforge.net/p/octave/package-releases/new/"
-	@echo 'Execute: hg tag "release-${VERSION}"'
 
-## Note that in development versions this target may fail if we are dependent
-## on unreleased versions.  This is by design, to force possible developers
-## to set this up by hand (either using the "-nodeps" option" or changing the
-## dependencies on DESCRIPTION.
-install: $(RELEASE_TARBALL)
-	@echo "Installing package locally ..."
-	$(OCTAVE) --eval 'pkg ("install", "${RELEASE_TARBALL}")'
+##
+## Recipes for installing the package.
+##
 
-all: $(CC_SOURCES)
-	$(MAKE) -C src/ all
+.PHONY: install clean-install
 
-check: all
-	$(OCTAVE) --path "inst/" --path "src/" \
-	  --eval '${PKG_ADD}' \
-	  --eval 'runtests ("inst"); runtests ("src");'
+octave_install_commands = \
+' llist_path = pkg ("local_list"); \
+  mkdir ("$(installation_dir)"); \
+  load (llist_path); \
+  local_packages(cellfun (@ (x) strcmp ("$(package)", x.name), local_packages)) = []; \
+  save ("$(package_list)", "local_packages"); \
+  pkg ("local_list", "$(package_list)"); \
+  pkg ("prefix", "$(installation_dir)", "$(installation_dir)"); \
+  pkg ("install", "-local", "-verbose", "$(release_tarball)"); '
 
-run: all
-	$(OCTAVE) --persist --path "inst/" --path "src/" \
-	  --eval '${PKG_ADD}'
+## Install unconditionally. Maybe useful for testing installation with
+## different versions of Octave.
+install: $(release_tarball)
+	@echo "Installing package under $(installation_dir) ..."
+	$(OCTAVE) --eval $(octave_install_commands)
+	touch $(install_stamp)
 
-clean:
-	$(RM) -r $(TARGET_DIR)
-	$(MAKE) -C src/ clean
+## Install only if installation (under target/...) is not current.
+$(install_stamp): $(release_tarball)
+	@echo "Installing package under $(installation_dir) ..."
+	$(OCTAVE) --eval $(octave_install_commands)
+	touch $(install_stamp)
 
-distclean: clean
-	$(MAKE) -C src/ distclean
+clean-install:
+	-$(RM) -r $(installation_dir)
+
+##
+## Recipes for testing purposes
+##
+
+.PHONY: run doctest test
+
+test: local
+	./dev-tools/runtests.sh inst
+
+## Start an Octave session with the package directories on the path for
+## interactice test of development sources.
+run: $(install_stamp)
+	$(run_in_place) --persist
+
+## Test example blocks in the documentation.  Needs doctest package
+##  https://octave.sourceforge.io/doctest/index.html
+doctest: $(install_stamp)
+	$(run_in_place) --eval 'pkg load doctest;'                                                          \
+	  --eval "targets = '$(shell (ls inst; ls src | $(GREP) .oct) | $(CUT) -f2 -d@ | $(CUT) -f1 -d.)';" \
+	  --eval "targets = strsplit (targets, ' ');  doctest (targets);"
+
+
+## Test package.
+octave_test_commands = \
+' args = {"inst", "src"}; \
+  args(cellfun (@ (x) ! isdir (x), args)) = []; \
+  if (isempty (args)) error ("no \"inst\" or \"src\" directory"); exit (1); \
+    else cellfun(@runtests, args); endif '
+check: $(install_stamp)
+	$(run_in_place) --eval $(octave_test_commands)
+
+
+##
+## Recipes for local (in-tree) build
+##
+
+.PHONY: local doc clean-local
+
+# This used to call __jsonstuff_make_local__.m
+local: src/*.cc 
+	cd src && make all
+	cp src/*.oct inst
+
+doc:
+	cd doc && make all
+
+
+##
+## CLEAN
+##
+
+clean-local:
+	rm -f inst/*.oct src/*.oct src/*.o
+
+clean-unpacked-release:
+	-$(RM) -r $(release_dir) $(html_dir)
+
+clean: clean-local
+	$(RM) -rf $(target_dir)
+
+.PHONY: release dist html clean clean-tarballs clean-unpacked-release
