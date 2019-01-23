@@ -20,8 +20,6 @@ addons:
       - octave
       - qt
       - findutils
-      # Need gcc for gfortran
-      - gcc
 
 matrix:
   include:
@@ -30,12 +28,15 @@ matrix:
       env: dist="Xenial 16.x, Octave 4.2"
     - os: osx
       osx_image: xcode10.1
+      env: 
+        - dist="Octave 4.4"
+        # gcc isn't linked in the xcode10.1 image
+        - FORTRAN=/usr/local/opt/gcc/bin/gfortran
+    - os: osx
+      osx_image: xcode10
       env: dist="Octave 4.4"
     - os: osx
       osx_image: xcode9.4
-      env: dist="Octave 4.4"
-    - os: osx
-      osx_image: xcode10
       env: dist="Octave 4.4"
 
 install:
