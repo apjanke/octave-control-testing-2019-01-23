@@ -39,7 +39,7 @@ ifndef OCTAVE
 OCTAVE := octave
 endif
 OCTAVE := $(OCTAVE) --no-gui --silent --norc
-MKOCTFILE ?= mkoctfile
+MKOCTFILE ?= mkoctfile --verbose
 
 ## Command used to set permissions before creating tarballs
 FIX_PERMISSIONS ?= chmod -R a+rX,u+w,go-w,ug-s

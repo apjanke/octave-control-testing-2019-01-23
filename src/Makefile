@@ -1,4 +1,4 @@
-MKOCTFILE ?= mkoctfile
+MKOCTFILE ?= mkoctfile --verbose
 
 ifndef LAPACK_LIBS
 LAPACK_LIBS := $(shell $(MKOCTFILE) -p LAPACK_LIBS)
