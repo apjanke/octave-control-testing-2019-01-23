@@ -61,7 +61,7 @@ F77_INT min (F77_INT a, F77_INT b)
         return b;
 }
 
-void error_msg (const char name[], int index, octave_idx_type max, const char* msg[])
+void error_msg (const char name[], octave_idx_type index, octave_idx_type max, const char* msg[])
 {
     if (index == 0)
         return;
@@ -74,7 +74,8 @@ void error_msg (const char name[], int index, octave_idx_type max, const char* m
         error ("%s: unknown error, info = %d", name, index);
 }
 
-void warning_msg (const char name[], int index, octave_idx_type max, const char* msg[])
+
+void warning_msg (const char name[], octave_idx_type index, octave_idx_type max, const char* msg[])
 {
     if (index == 0)
         return;
@@ -85,7 +86,7 @@ void warning_msg (const char name[], int index, octave_idx_type max, const char*
         warning ("%s: unknown warning, iwarn = %d", name, index);
 }
 
-void warning_msg (const char name[], int index, octave_idx_type max, const char* msg[], int offset)
+void warning_msg (const char name[], octave_idx_type index, octave_idx_type max, const char* msg[], octave_idx_type offset)
 {
     if (index == 0)
         return;
