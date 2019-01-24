@@ -25,7 +25,7 @@ function install_octave_4_4_from_flatpak () {
 	sudo apt-get install --yes flatpak
 
 	sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-	flatpak install -y flathub org.octave.Octave
+	sudo flatpak install -y flathub org.octave.Octave
 }
 
 case $OCTAVE_VER in
