@@ -57,6 +57,7 @@ script:
   - set
   - cat ~/.bashrc
   - cat ~/.bash_profile
+  - cat ~/.profile
   - ps
   - pstree
   - which octave; true
