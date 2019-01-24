@@ -56,7 +56,7 @@ script:
   - echo PATH=$PATH
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then OCTAVE_DIR=$(cat ~/octave_dir.txt); fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo OCTAVE_DIR=$OCTAVE_DIR; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then PATH=$OCTAVE_DIR:$PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then PATH=$OCTAVE_DIR/files/bin:$PATH; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo now PATH=$PATH; fi
   - cat ~/.bashrc
   - cat ~/.bash_profile
