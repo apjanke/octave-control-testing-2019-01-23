@@ -37,7 +37,7 @@ matrix:
       env: 
         - dist="Xenial 16.x"
         - OCTAVE_VER=4.4
-        - OCTAVE="sudo flatpak run org.octave.Octave --no-gui"
+        #- OCTAVE="sudo flatpak run org.octave.Octave --no-gui"
     - os: osx
       osx_image: xcode10.1
       env: 
