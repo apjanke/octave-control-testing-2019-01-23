@@ -71,8 +71,8 @@ install:
 script:
   - echo BASH version=$BASH_VERSION
   - echo PATH=$PATH
-  - ls -l /home/travis/bin
-  - ls -ld /home/travis/bin
+  - ls -l ~/bin
+  - ls -ld ~/bin
   - echo now PATH=$PATH
   - cat ~/.bashrc
   - cat ~/.bash_profile
