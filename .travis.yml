@@ -31,6 +31,8 @@ env:
   global:
     - OCTAVE=octave
     - HOMEBREW_NO_AUTO_UPDATE=1
+    - OCT_PKG=control
+    - OCT_PKG_VER=3.1.0
 
 matrix:
   include:
@@ -86,17 +88,18 @@ script:
   - which octave
   - octave --version
   - file $(which octave)
-  - ls -ld $(readlink $(which octave))
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -ld $(readlink $(which octave)); end
   - octave --eval "ver"
   - which mkoctfile
   - file $(which mkoctfile)
-  - ls -ld $(readlink $(which mkoctfile))
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -ld $(readlink $(which mkoctfile)); end
   - mkoctfile --version
-  - find /var/lib/flatpak/app/org.octave.Octave
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then find /var/lib/flatpak/app/org.octave.Octave; end
   - make local
   - make dist
-  - $OCTAVE --no-gui --eval "pkg install ./target/control-3.1.0.tar.gz"
-  - $OCTAVE --no-gui --eval "pkg load control; pkg unload control"
-  - $OCTAVE --no-gui --eval "pkg load control; my_run_tests_and_exit ./inst"
-  - $OCTAVE --no-gui --eval "pkg load control; test('ltimodels', 'verbose', 'stdout')"
-  - $OCTAVE --no-gui --eval "pkg uninstall control"
+  - $OCTAVE --no-gui --eval "pkg install ./target/${OCT_PKG}-${OCT_PKG_VER}.tar.gz"
+  - $OCTAVE --no-gui --eval "pkg load ${OCT_PKG}; pkg unload ${OCT_PKG}"
+  - $OCTAVE --no-gui --eval "pkg load ${OCT_PKG}; my_run_tests_and_exit ${OCT_PKG}"
+  # Special test for control package
+  - $OCTAVE --no-gui --eval "pkg load ${OCT_PKG}; test('ltimodels', 'verbose', 'stdout')"
+  - $OCTAVE --no-gui --eval "pkg uninstall ${OCT_PKG}"
