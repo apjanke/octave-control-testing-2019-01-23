@@ -2,7 +2,8 @@
 #
 # This installs Octave on Ubuntu, doing what's necessary to get a newer 4.2
 # Octave even if this distro's default is an older version.
-
+#
+# This should work on Trusty, Xenial, and Bionic.
 
 function install_octave_4_2_from_apt () {
 	if grep -i 'xenial\|trusty' /etc/lsb-release &>/dev/null; then

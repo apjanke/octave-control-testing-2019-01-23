@@ -61,7 +61,7 @@ matrix:
 
 install:
   # Install Octave 4.2/4.4, even if it's not the default in apt-get
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./dev-tools/install-new-octave-ubuntu.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./dev-tools/install-octave-ubuntu.sh; fi
   # Force linkage of gcc so octave can find gfortran
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link gcc; true; fi
   # Install Octave for macOS
@@ -70,9 +70,6 @@ install:
 script:
   - echo BASH version=$BASH_VERSION
   - echo PATH=$PATH
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then OCTAVE_DIR=$(cat ~/octave_dir.txt); fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo OCTAVE_DIR=$OCTAVE_DIR; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then PATH=$OCTAVE_DIR/files/bin:$PATH; fi
   - ls -l ~/bin
   - ls -l ~/.local/bin
   - echo now PATH=$PATH
