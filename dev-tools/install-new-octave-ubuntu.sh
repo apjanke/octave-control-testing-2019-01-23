@@ -30,6 +30,7 @@ function install_octave_4_4_from_flatpak () {
 	octave_dir=$(flatpak info org.octave.Octave | grep Location | cut -d ":" -f 2 | cut -d " " -f 2)
 	echo "" >> ~/.bash_profile
 	echo "PATH=$octave_dir/files/bin:$PATH" >> ~/.bash_profile
+	echo "$octave_dir" > ~/octave_dir.txt
 }
 
 case $OCTAVE_VER in
