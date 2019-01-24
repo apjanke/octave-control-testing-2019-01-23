@@ -70,19 +70,24 @@ install:
 script:
   - echo BASH version=$BASH_VERSION
   - echo PATH=$PATH
-  - ls -l ~/bin
+  - ls -l /home/travis/bin
+  - ls -ld /home/travis/bin
   - ls -l ~/.local/bin
   - echo now PATH=$PATH
   - cat ~/.bashrc
   - cat ~/.bash_profile
   - cat ~/.profile
+  - ls -ld ~/.travis/job_stages
+  - cat ~/.travis/job_stages
   - ps
   - pstree
   - echo now PATH=$PATH
   - which octave
   - octave --version
+  - file $(which octave)
   - octave --eval "ver"
   - which mkoctfile
+  - file $(which mkoctfile)
   - mkoctfile --version
   - make local
   - make dist
