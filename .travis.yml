@@ -54,7 +54,7 @@ install:
 
 script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./dev-tools/install-new-octave-ubuntu.sh; fi
-  - set
+  - echo PATH=$PATH
   - cat ~/.bashrc
   - cat ~/.bash_profile
   - cat ~/.profile
