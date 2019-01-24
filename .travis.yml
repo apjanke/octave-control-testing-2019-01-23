@@ -19,10 +19,13 @@ addons:
     taps:
       - octave-app/octave-app-bases
       - octave-app/octave-app-openblas
+      - caskroom/versions
     packages:
       - qt
       - findutils
       - pstree
+    casks:
+      - java8
 
 env:
   global:
