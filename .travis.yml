@@ -17,9 +17,9 @@ addons:
       - libqt5sql5-sqlite
   homebrew:
     taps:
+      - homebrew/cask-versions
       - octave-app/octave-app-bases
       - octave-app/octave-app-openblas
-      - caskroom/versions
     packages:
       - qt
       - findutils
