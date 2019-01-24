@@ -1,5 +1,8 @@
-function my_run_tests_and_exit (directory)
-  nfailed = my_runtests (directory);
+function my_run_tests_and_exit (pkg_name)
+  pkg('load', pkg_name);
+  pkg_info = pkg('list', pkg_name);
+  pkg_dir = pkg_info{1}.dir;
+  nfailed = my_runtests (pkg_dir);
   fprintf ('Number of failed tests: %d\n', nfailed);
   exit (double (nfailed > 0));
 endfunction
@@ -60,16 +63,17 @@ function nfailed = my_runtests (directory)
     print_usage ();
   endif
 
+  nfailed = 0;
   for i = 1:numel (dirs)
     d = dirs{i};
-    nfailed = run_all_tests (d, do_class_dirs);
+    nfailed += run_all_tests (d, do_class_dirs);
   endfor
 
 endfunction
 
-function nfailed = run_all_tests (directory, do_class_dirs)
+function nfailed_total = run_all_tests (directory, do_class_dirs)
 
-  nfailed = 0;
+  nfailed_total = 0;
   flist = readdir (directory);
   dirs = {};
   no_tests = {};
@@ -83,7 +87,8 @@ function nfailed = run_all_tests (directory, do_class_dirs)
       if (has_tests (ff))
         print_test_file_name (f);
         [p, n, xf, xb, sk, rtsk, rgrs] = test (ff, "quiet");
-        nfailed = nfailed + (n - p);
+        nfailed = n - p - xf - xb - rgrs;
+        nfailed_total += nfailed;
         print_pass_fail (p, n, xf, xb, sk, rtsk, rgrs);
         fflush (stdout);
       elseif (has_functions (ff))
@@ -105,7 +110,7 @@ function nfailed = run_all_tests (directory, do_class_dirs)
   if (do_class_dirs)
     for i = 1:numel (dirs)
       d = dirs{i};
-      nfailed = nfailed + run_all_tests (d, false);
+      nfailed_total += run_all_tests (d, false);
     endfor
   endif
 
