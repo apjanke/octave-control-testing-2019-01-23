@@ -5,9 +5,9 @@ set -x
 if [[ "$OCTAVE_BLAS" == "openblas" ]]; then
 	if [[ "$OCTAVE_VER" == "stable" ]]; then
 		formula=octave-stable-openblas
-	else if [[ "$OCTAVE_VER" == "default" ]]; then
+	elif [[ "$OCTAVE_VER" == "default" ]]; then
 		formula=octave-default-openblas
-	else if [[ "$OCTAVE_VER" == "4.4" ]]; then
+	elif [[ "$OCTAVE_VER" == "4.4" ]]; then
 		formula=octave-openblas
 	else
 		echo &>2 Unsupported OCTAVE_VER: $OCTAVE_VER. Must be stable, default, or 4.4
@@ -15,9 +15,9 @@ if [[ "$OCTAVE_BLAS" == "openblas" ]]; then
 else
 	if [[ "$OCTAVE_VER" == "stable" ]]; then
 		formula=octave-stable
-	else if [[ "$OCTAVE_VER" == "default" ]]; then
+	elif [[ "$OCTAVE_VER" == "default" ]]; then
 		formula=octave-default
-	else if [[ "$OCTAVE_VER" == "4.4" ]]; then
+	elif [[ "$OCTAVE_VER" == "4.4" ]]; then
 		formula=octave
 	else
 		echo &>2 Unsupported OCTAVE_VER: $OCTAVE_VER. Must be stable, default, or 4.4
