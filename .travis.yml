@@ -50,10 +50,10 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./dev-tools/install-new-octave-ubuntu.sh; fi
   # Force linkage of gcc so octave can find gfortran
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link gcc; true; fi  
-  - which octave
-  - octave --version
 
 script:
+  - which octave
+  - octave --version
   - make local
   # Don't test on local; this package isn't set up for its
   #- make test
