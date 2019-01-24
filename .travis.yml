@@ -16,8 +16,12 @@ addons:
       - qttools5-dev-tools
       - libqt5sql5-sqlite
   homebrew:
+    taps:
+      - octave-app/octave-app-bases
+      - octave-app/octave-app-openblas
     packages:
       - octave
+      - octave-openblas
       - qt
       - findutils
       - pstree
@@ -43,9 +47,12 @@ matrix:
       osx_image: xcode10.1
       env: 
         - dist="Octave 4.4"
+        - OCTAVE="octave-openblas"
     - os: osx
       osx_image: xcode10
-      env: dist="Octave 4.4"
+      env: 
+        - dist="Octave 4.4"
+        - OCTAVE="octave-openblas"
 
 install:
   # Install Octave 4.2/4.4, even if it's not the default
