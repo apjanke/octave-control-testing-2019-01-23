@@ -45,9 +45,6 @@ matrix:
     - os: osx
       osx_image: xcode10
       env: dist="Octave 4.4"
-    - os: osx
-      osx_image: xcode9.4
-      env: dist="Octave 4.4"
 
 install:
   # Install Octave 4.2/4.4, even if it's not the default
