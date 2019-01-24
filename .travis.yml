@@ -74,6 +74,7 @@ script:
   - ls -ld ~/.travis/job_stages
   #- cat ~/.travis/job_stages
   - echo now PATH=$PATH
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat -n ~/.travis/job_stages | head -200; fi
   - which octave
   - octave --version
   - file $(which octave)
