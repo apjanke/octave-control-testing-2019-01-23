@@ -25,7 +25,7 @@ else
 fi
 
 echo "Installing brew Octave formula: $formula"
-brew install "$formula"
+brew install "$formula" --without-docs
 ln -s $(brew --prefix "$formula")/bin/octave ~/bin
 ln -s $(brew --prefix "$formula")/bin/mkoctfile ~/bin
 

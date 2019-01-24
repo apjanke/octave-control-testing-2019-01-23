@@ -27,6 +27,7 @@ addons:
 env:
   global:
     - OCTAVE=octave
+    - HOMEBREW_NO_AUTO_UPDATE=1
 
 matrix:
   include:
