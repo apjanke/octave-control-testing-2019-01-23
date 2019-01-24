@@ -65,14 +65,17 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then OCTAVE_DIR=$(cat ~/octave_dir.txt); fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo OCTAVE_DIR=$OCTAVE_DIR; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then PATH=$OCTAVE_DIR/files/bin:$PATH; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo now PATH=$PATH; fi
+  - echo now PATH=$PATH
   - cat ~/.bashrc
   - cat ~/.bash_profile
   - cat ~/.profile
   - ps
   - pstree
-  - which octave; true
-  - octave --version; true
+  - echo now PATH=$PATH
+  - which octave
+  - octave --version
+  - which mkoctfile
+  - mkoctfile --version
   - make local
   # Don't test on local; this package isn't set up for its
   #- make test
