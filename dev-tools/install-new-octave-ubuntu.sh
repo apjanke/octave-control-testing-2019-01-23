@@ -26,11 +26,10 @@ function install_octave_4_4_from_flatpak () {
 
 	sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 	sudo flatpak install -y flathub org.octave.Octave
-	# Super duper hack to get this flatpak octave and mkoctfile on the path
+	# Hack to get this flatpak octave and mkoctfile on the path
 	octave_dir=$(flatpak info org.octave.Octave | grep Location | cut -d ":" -f 2 | cut -d " " -f 2)
-	echo "" >> ~/.bash_profile
-	echo "PATH=$octave_dir/files/bin:$PATH" >> ~/.bash_profile
-	echo "$octave_dir" > ~/octave_dir.txt
+	ln -s "$octave_dir/files/bin/octave" ~/bin
+	ln -s "$octave_dir/files/bin/mkoctfile" ~/bin
 }
 
 case $OCTAVE_VER in
