@@ -53,6 +53,12 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link gcc; true; fi  
 
 script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./dev-tools/install-new-octave-ubuntu.sh; fi
+  - set
+  - cat ~/.bashrc
+  - cat ~/.bash_profile
+  - ps
+  - pstree
   - which octave; true
   - octave --version; true
   - make local
