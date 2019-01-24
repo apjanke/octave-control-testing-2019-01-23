@@ -68,6 +68,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./dev-tools/install-octave-macos.sh; fi
 
 script:
+  - echo BASH version=$BASH_VERSION
   - echo PATH=$PATH
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then OCTAVE_DIR=$(cat ~/octave_dir.txt); fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo OCTAVE_DIR=$OCTAVE_DIR; fi
