@@ -20,7 +20,7 @@ addons:
       - octave-app/octave-app-bases
       - octave-app/octave-app-openblas
     packages:
-      - octave
+      #- octave
       - octave-openblas
       - qt
       - findutils
@@ -47,18 +47,19 @@ matrix:
       osx_image: xcode10.1
       env: 
         - dist="Octave 4.4"
-        - OCTAVE="octave-openblas"
     - os: osx
       osx_image: xcode10
       env: 
         - dist="Octave 4.4"
-        - OCTAVE="octave-openblas"
 
 install:
   # Install Octave 4.2/4.4, even if it's not the default
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./dev-tools/install-new-octave-ubuntu.sh; fi
   # Force linkage of gcc so octave can find gfortran
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link gcc; true; fi  
+  # Link for octave-openblas to take precedence
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ln -s /usr/local/opt/octave-openblas/bin/octave ~/bin; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ln -s /usr/local/opt/octave-openblas/bin/mkoctfile ~/bin; fi
 
 script:
   - echo PATH=$PATH
