@@ -88,13 +88,13 @@ script:
   - which octave
   - octave --version
   - file $(which octave)
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -ld $(readlink $(which octave)); end
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -ld $(readlink $(which octave)); fi
   - octave --eval "ver"
   - which mkoctfile
   - file $(which mkoctfile)
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -ld $(readlink $(which mkoctfile)); end
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -ld $(readlink $(which mkoctfile)); fi
   - mkoctfile --version
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then find /var/lib/flatpak/app/org.octave.Octave; end
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then find /var/lib/flatpak/app/org.octave.Octave; fi
   - make local
   - make dist
   - $OCTAVE --no-gui --eval "pkg install ./target/${OCT_PKG}-${OCT_PKG_VER}.tar.gz"
