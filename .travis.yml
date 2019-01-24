@@ -30,6 +30,7 @@ addons:
 env:
   global:
     - OCTAVE=octave
+    - OCTAVE_VER=4.4
     - HOMEBREW_NO_AUTO_UPDATE=1
     - OCT_PKG=control
     - OCT_PKG_VER=3.1.0
@@ -40,29 +41,17 @@ matrix:
       dist: xenial
       env: 
         - dist="Xenial 16.x"
-        - OCTAVE_VER=4.2
-    - os: linux
-      dist: xenial
-      env: 
-        - dist="Xenial 16.x"
-        - OCTAVE_VER=4.4
     - os: osx
       osx_image: xcode10.1
-      env: 
-        - OCTAVE_VER=4.4
     - os: osx
       osx_image: xcode10
-      env: 
-        - OCTAVE_VER=4.4
     - os: osx
       osx_image: xcode10.1
       env: 
-        - OCTAVE_VER=4.4
         - OCTAVE_BLAS=openblas
     - os: osx
       osx_image: xcode10
       env: 
-        - OCTAVE_VER=4.4
         - OCTAVE_BLAS=openblas
 
 install:
