@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This installs Octave on Ubuntu, doing what's necessary to get a newer 4.2
+# This installs Octave on Ubuntu, doing what's necessary to get a newer 4.2+
 # Octave even if this distro's default is an older version.
 #
 # This should work on Trusty, Xenial, and Bionic.
@@ -19,7 +19,7 @@ function install_octave_4_2_from_apt () {
 function install_octave_4_4_from_flatpak () {
 	echo $0: installing flatpak
 	if grep -i 'xenial\|trusty' /etc/lsb-release &>/dev/null; then
-		echo $0: Adding apt repository ppa:octave/stable to get newer Octave 4.2
+		echo $0: Adding apt repository ppa:alexlarsson/flatpak to get newer Octave 4.4+
 		sudo add-apt-repository ppa:alexlarsson/flatpak --yes
 		sudo apt-get update
 	fi
