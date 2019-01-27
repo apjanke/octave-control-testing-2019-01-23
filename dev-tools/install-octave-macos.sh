@@ -30,7 +30,10 @@ echo "Installing brew Octave formula: $formula"
 if [[ $bottle == 1 ]]; then
 	brew install "$formula"
 else
-	brew install --only-dependencies "$formula" --without-docs
+	# Use this instead of "brew install --only-dependencies $formula" to avoid
+	# MacTeX dependency error
+	deps=$(brew deps "$formula" --include-build)
+	brew install $deps
 	# Gotta use --verbose to prevent Travis from timing out
 	brew install --verbose "$formula" --without-docs
 fi
