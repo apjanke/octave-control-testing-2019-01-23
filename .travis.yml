@@ -41,6 +41,7 @@ matrix:
       dist: xenial
       env: 
         - dist="Xenial 16.x"
+        - OCTAVE="flatpak run org.octave.Octave"
     - os: osx
       osx_image: xcode10.1
     - os: osx
@@ -75,8 +76,8 @@ script:
   #- cat ~/.travis/job_stages
   - echo now PATH=$PATH
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat -n ~/.travis/job_stages | head -200; fi
-  - which octave
-  - octave --version
+  - which octave; true
+  - octave --version; true
   - file $(which octave)
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -ld $(readlink $(which octave)); fi
   - octave --eval "ver"
