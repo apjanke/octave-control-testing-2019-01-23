@@ -30,7 +30,7 @@ echo "Installing brew Octave formula: $formula"
 if [[ $bottle == 1 ]]; then
 	brew install "$formula"
 else
-	brew install --only-dependencies "$formula"
+	brew install --only-dependencies "$formula" --without-docs
 	# Gotta use --verbose to prevent Travis from timing out
 	brew install --verbose "$formula" --without-docs
 fi
