@@ -37,8 +37,9 @@ else
 	# Gotta use --verbose to prevent Travis from timing out
 	brew install --verbose "$formula" --without-docs
 fi
-ln -s $(brew --prefix "$formula")/bin/octave ~/bin
-ln -s $(brew --prefix "$formula")/bin/mkoctfile ~/bin
+mkdir -p ~/bin
+ln -s $(brew --prefix "$formula")/bin/octave ~/bin/octave
+ln -s $(brew --prefix "$formula")/bin/mkoctfile ~/bin/mkoctfile
 
 
 echo "Octave installation results:"

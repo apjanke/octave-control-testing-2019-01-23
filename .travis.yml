@@ -64,7 +64,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./dev-tools/install-octave-macos.sh; fi
 
 script:
-  - ls -ld ~/.travis/job_stages
+  - echo PATH=$PATH
   - $OCTAVE --eval "ver"
   - make dist
   - $OCTAVE --no-gui --eval "pkg install ./target/${OCT_PKG}-${OCT_PKG_VER}.tar.gz"
