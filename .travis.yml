@@ -64,29 +64,8 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./dev-tools/install-octave-macos.sh; fi
 
 script:
-  - echo BASH version=$BASH_VERSION
-  - echo PATH=$PATH
-  - ls -l ~/bin
-  - ls -ld ~/bin
-  - echo now PATH=$PATH
-  - cat ~/.bashrc
-  - cat ~/.bash_profile
-  - cat ~/.profile
   - ls -ld ~/.travis/job_stages
-  #- cat ~/.travis/job_stages
-  - echo now PATH=$PATH
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat -n ~/.travis/job_stages | head -200; fi
-  - which octave; true
-  - octave --version; true
-  - file $(which octave)
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -ld $(readlink $(which octave)); fi
-  - octave --eval "ver"
-  - which mkoctfile
-  - file $(which mkoctfile)
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -ld $(readlink $(which mkoctfile)); fi
-  - mkoctfile --version
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then find /var/lib/flatpak/app/org.octave.Octave -name octave -o -name mkoctfile; fi
-  #- make local
+  - $OCTAVE --eval "ver"
   - make dist
   - $OCTAVE --no-gui --eval "pkg install ./target/${OCT_PKG}-${OCT_PKG_VER}.tar.gz"
   - $OCTAVE --no-gui --eval "pkg load ${OCT_PKG}; pkg unload ${OCT_PKG}"
