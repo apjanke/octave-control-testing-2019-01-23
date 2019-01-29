@@ -33,9 +33,8 @@ else
 	# Use this instead of "brew install --only-dependencies $formula" to avoid
 	# MacTeX dependency error
 	deps=$(brew deps "$formula" --include-build)
-	brew install $deps
-	# Gotta use --verbose to prevent Travis from timing out
-	brew install --verbose "$formula" --without-docs
+	travis_wait 20 brew install $deps
+	travis_wait 30 brew install "$formula" --without-docs
 fi
 mkdir -p ~/bin
 ln -s $(brew --prefix "$formula")/bin/octave ~/bin/octave
