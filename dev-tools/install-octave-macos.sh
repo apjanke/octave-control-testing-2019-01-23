@@ -33,8 +33,8 @@ else
 	# Use this instead of "brew install --only-dependencies $formula" to avoid
 	# MacTeX dependency error
 	deps=$(brew deps "$formula" --include-build)
-	travis_wait 20 brew install $deps
-	travis_wait 30 brew install "$formula" --without-docs
+	brew install $deps
+	brew install "$formula" --without-docs
 fi
 
 # Disgusting hack to make keg-only octaves visible as unqualified "octave" command
