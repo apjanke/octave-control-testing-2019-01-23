@@ -65,6 +65,9 @@ install:
 
 script:
   - echo PATH=$PATH
+  - find ~/bin
+  - ls -l ~/bin/octave
+  - ls -l ~/bin/mkoctfile
   - $OCTAVE --eval "ver"
   - make dist
   - $OCTAVE --no-gui --eval "pkg install ./target/${OCT_PKG}-${OCT_PKG_VER}.tar.gz"

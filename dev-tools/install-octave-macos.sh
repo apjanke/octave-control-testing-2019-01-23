@@ -36,14 +36,16 @@ else
 	travis_wait 20 brew install $deps
 	travis_wait 30 brew install "$formula" --without-docs
 fi
+
+# Disgusting hack to make keg-only octaves visible as unqualified "octave" command
 mkdir -p ~/bin
 ln -s $(brew --prefix "$formula")/bin/octave ~/bin/octave
 ln -s $(brew --prefix "$formula")/bin/mkoctfile ~/bin/mkoctfile
 
-
 echo "Octave installation results:"
 brew info "$formula"
+echo "Formula prefix: $(brew --prefix $formula)"
 which octave
-ls -l $(which octave)
+ls -l "$(which octave)"
 which mkoctfile
-ls -l $(which mkoctfile)
+ls -l "$(which mkoctfile)"
