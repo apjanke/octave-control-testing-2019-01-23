@@ -70,6 +70,7 @@ script:
   - $OCTAVE --no-gui --eval "pkg install ./target/${OCT_PKG}-${OCT_PKG_VER}.tar.gz"
   - $OCTAVE --no-gui --eval "pkg load ${OCT_PKG}; pkg unload ${OCT_PKG}"
   - $OCTAVE --no-gui --eval "pkg load ${OCT_PKG}; my_run_tests_and_exit ${OCT_PKG}"
-  # Special test for control package
+  # Special tests for control package
   - $OCTAVE --no-gui --eval "pkg load ${OCT_PKG}; test('ltimodels', 'verbose', 'stdout')"
+  - $OCTAVE --no-gui --eval "pkg load ${OCT_PKG}; test('bstmodred', 'verbose', 'stdout')"
   - $OCTAVE --no-gui --eval "pkg uninstall ${OCT_PKG}"
