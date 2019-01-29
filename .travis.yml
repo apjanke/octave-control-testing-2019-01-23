@@ -63,6 +63,15 @@ install:
   # Install Octave for macOS
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./dev-tools/install-octave-macos.sh; fi
 
+after_install:
+  - echo "Octave installation results:"
+  - brew info "$formula"
+  - echo "Formula prefix: $(brew --prefix $formula)"
+  - which octave
+  - ls -l "$(which octave)"
+  - which mkoctfile
+  - ls -l "$(which mkoctfile)"
+
 script:
   - echo PATH=$PATH
   - find ~/bin

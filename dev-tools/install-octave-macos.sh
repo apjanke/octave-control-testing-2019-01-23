@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x
+set -e
 
 bottle=0
 if [[ "$OCTAVE_BLAS" == "openblas" ]]; then
@@ -41,11 +42,3 @@ fi
 mkdir -p ~/bin
 ln -s $(brew --prefix "$formula")/bin/octave ~/bin/octave
 ln -s $(brew --prefix "$formula")/bin/mkoctfile ~/bin/mkoctfile
-
-echo "Octave installation results:"
-brew info "$formula"
-echo "Formula prefix: $(brew --prefix $formula)"
-which octave
-ls -l "$(which octave)"
-which mkoctfile
-ls -l "$(which mkoctfile)"
