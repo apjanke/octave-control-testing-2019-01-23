@@ -3,6 +3,36 @@
 set -x
 set -e
 
+# Gotta use our own "heartbeat" to prevent Travis timeouts because 
+# travis_wait isn't available in the "install" stage
+
+function start_heartbeat {
+    if [ -n "$TRAVIS_CLIENT_SPINNER_PID" ]; then
+        return
+    fi
+
+    >&2 echo "Working..."
+    # Start a process that runs as a keep-alive
+    # to avoid travis quitting if there is no output
+    (while true; do
+        sleep 60
+        >&2 echo "Still working..."
+    done) &
+    TRAVIS_CLIENT_SPINNER_PID=$!
+    disown
+}
+
+function stop_heartbeat {
+    if [ ! -n "$TRAVIS_CLIENT_SPINNER_PID" ]; then
+        return
+    fi
+    
+    kill $TRAVIS_CLIENT_SPINNER_PID
+    unset TRAVIS_CLIENT_SPINNER_PID
+
+    >&2 echo "Work finished."
+}
+
 bottle=0
 if [[ "$OCTAVE_BLAS" == "openblas" ]]; then
 	if [[ "$OCTAVE_VER" == "stable" ]]; then
@@ -35,10 +65,13 @@ else
 	# MacTeX dependency error
 	deps=$(brew deps "$formula" --include-build)
 	brew install $deps
+	start_heartbeat
 	brew install "$formula" --without-docs
+	stop_heartbeat
 fi
 
 # Disgusting hack to make keg-only octaves visible as unqualified "octave" command
 mkdir -p ~/bin
 ln -s $(brew --prefix "$formula")/bin/octave ~/bin/octave
 ln -s $(brew --prefix "$formula")/bin/mkoctfile ~/bin/mkoctfile
+

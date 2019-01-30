@@ -61,7 +61,7 @@ install:
   # Force linkage of gcc so octave can find gfortran
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link gcc; true; fi
   # Install Octave for macOS
-  - travis_wait 40 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./dev-tools/install-octave-macos.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./dev-tools/install-octave-macos.sh; fi
 
 after_install:
   - echo "Octave installation results:"
